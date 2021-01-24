@@ -30,7 +30,8 @@ sierra_ramu <- read_excel(here("data", "sierra_amphibians.xlsx")) %>%
 sierra_ramu
   
  ramu_count <- ggplot(data = sierra_ramu, aes(x = year, y = amphibian_number)) +
-   geom_point(aes(color = "amphibian_life_stage")) +
+   geom_point(aes(color = "amphibian_life_stage")) + 
+   geom_line() +
    facet_wrap(~amphibian_life_stage)
  
  ramu_count

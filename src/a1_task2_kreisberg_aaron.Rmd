@@ -1,0 +1,42 @@
+---
+title: "a1_task2_kreisberg_aaron"
+author: "Aaron Kreisberg"
+date: "1/23/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(janitor)
+library(here)
+library(ggfortify)
+```
+
+
+```{r}
+usda_nutrients <- read_csv(here("data","usda_nutrients.csv")) %>% 
+  clean_names()
+
+foods_pca <- usda_nutrients %>% 
+  filter(food_group == c("Spices and Herbs", "Fats and Oils", "Snacks")) %>% 
+  select(ends_with("_g")) %>% 
+  scale() %>%
+  prcomp()
+
+foods_complete <- usda_nutrients %>% 
+  filter(food_group == c("Spices and Herbs", "Fats and Oils", "Snacks")) %>% 
+  select("id", "short_descrip","descrip","food_group", "energy_kcal", ends_with("_g")) 
+
+autoplot(foods_pca,
+         data = foods_complete,
+         loadings = TRUE,
+         colour = 'food_group',
+         loadings.label = TRUE,
+         loadings.colour = "black",
+         loadings.label.colour = "black",
+         loadings.label.vjust = -0.5
+         ) 
+```
+

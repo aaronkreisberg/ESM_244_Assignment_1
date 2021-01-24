@@ -46,5 +46,7 @@ sierra_lakes <- read_excel(here("data", "sierra_amphibians.xlsx")) %>%
   filter(amphibian_species == "RAMU") %>% 
   filter(amphibian_life_stage %in% c("Adult", "SubAdult"))
   
+sierra_lakes
+
 ```
 

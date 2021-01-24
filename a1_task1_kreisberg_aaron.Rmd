@@ -1,0 +1,49 @@
+---
+title: "ESM 244 Assignment 1 Part 1"
+author: "Aaron Kreisberg"
+date: "1/20/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(janitor)
+library(here)
+library(readxl)
+library(lubridate)
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+sierra_ramu <- read_excel(here("data", "sierra_amphibians.xlsx")) %>% 
+  select("survey_date", "amphibian_species", "amphibian_life_stage", "amphibian_number") %>% 
+  filter(amphibian_species == "RAMU") %>% 
+  drop_na() %>% 
+  filter(amphibian_life_stage %in% c("Adult", "SubAdult", "Tadpole")) %>%
+  mutate(date = ymd(survey_date)) %>% 
+  mutate(year = year(date)) %>% 
+  group_by(year, amphibian_life_stage) %>% 
+  summarise(amphibian_number = sum(amphibian_number)) 
+
+sierra_ramu
+  
+ ramu_count <- ggplot(data = sierra_ramu, aes(x = year, y = amphibian_number)) +
+   geom_point(aes(color = "amphibian_life_stage")) +
+   facet_wrap(~amphibian_life_stage)
+ 
+ ramu_count
+
+```
+
+
+
+```{r}
+sierra_lakes <- read_excel(here("data", "sierra_amphibians.xlsx")) %>% 
+  select("lake_id", "amphibian_species", "amphibian_life_stage", "amphibian_number") %>% 
+  filter(amphibian_species == "RAMU") %>% 
+  filter(amphibian_life_stage %in% c("Adult", "SubAdult"))
+  
+```
+

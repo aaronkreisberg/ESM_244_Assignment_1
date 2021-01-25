@@ -5,7 +5,7 @@ date: "1/23/2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 library(tidyverse)
@@ -40,3 +40,6 @@ autoplot(foods_pca,
          ) 
 ```
 
+**Figure 1:**
+
+**Citation:** US Department of Agriculture (USDA), Agricultural Research Service, Nutrient Data Laboratory.  USDA National Nutrient Database for Standard Reference, Legacy.  Version Current: April 2018.  Internet: http://www.ars.usda.gov/nutrientdata 

@@ -13,11 +13,14 @@ library(janitor)
 library(here)
 library(readxl)
 library(lubridate)
+library(patchwork)
 ```
 
 
 ```{r, message=FALSE, warning=FALSE}
-sierra_ramu <- read_excel(here("data", "sierra_amphibians.xlsx")) %>% 
+sierra_amphibians <- read_excel(here("data", "sierra_amphibians.xlsx"))
+
+sierra_ramu <- sierra_amphibians %>% 
   select("survey_date", "amphibian_species", "amphibian_life_stage", "amphibian_number") %>% 
   filter(amphibian_species == "RAMU") %>% 
   drop_na() %>% 
@@ -27,26 +30,51 @@ sierra_ramu <- read_excel(here("data", "sierra_amphibians.xlsx")) %>%
   group_by(year, amphibian_life_stage) %>% 
   summarise(amphibian_number = sum(amphibian_number)) 
 
-sierra_ramu
+
   
- ramu_count <- ggplot(data = sierra_ramu, aes(x = year, y = amphibian_number)) +
-   geom_point(aes(color = "amphibian_life_stage")) + 
-   geom_line() +
-   facet_wrap(~amphibian_life_stage)
+ramu_count <- ggplot(data = sierra_ramu, aes(x = year, y = amphibian_number)) +
+  geom_point(aes(color = "amphibian_life_stage")) + 
+  geom_line(na.translate = FALSE) +
+  facet_wrap(~amphibian_life_stage, scales = "free_y") +
+  labs(x = "Year",
+       y = "Amphibian Count") +
+  theme(legend.position = "none")
+   
  
- ramu_count
+```
+
+
+
+```{r, message=FALSE, warning=FALSE}
+sierra_lakes <- read_excel(here("data", "sierra_amphibians.xlsx")) %>% 
+  select("lake_id", "amphibian_species", "amphibian_life_stage", "amphibian_number") %>% 
+  filter(amphibian_species == "RAMU") %>% 
+  filter(amphibian_life_stage %in% c("Adult", "SubAdult")) %>% 
+  add_column(lake = "Lake") %>% 
+  unite(lake_id, c(lake, lake_id), sep = "_") %>% 
+  group_by(lake_id) %>% 
+  summarise(amphibian_number = sum(amphibian_number)) 
+  
+  
+top_5_lakes <- sierra_lakes %>% 
+  slice_max(amphibian_number, n = 5) 
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+top_5_bargraph <- ggplot(data = top_5_lakes, aes(x = lake_id, y = amphibian_number)) +
+  geom_bar(stat =  "identity")
 
 ```
 
 
 
 ```{r}
-sierra_lakes <- read_excel(here("data", "sierra_amphibians.xlsx")) %>% 
-  select("lake_id", "amphibian_species", "amphibian_life_stage", "amphibian_number") %>% 
-  filter(amphibian_species == "RAMU") %>% 
-  filter(amphibian_life_stage %in% c("Adult", "SubAdult"))
-  
-sierra_lakes
-
+ramu_count / top_5_bargraph
 ```
 
+
+**Figure 1:** 
+
+Citation: Knapp, R.A., C. Pavelka, E.E. Hegeman, and T.C. Smith. 2020. The Sierra Lakes Inventory Project: Non-Native fish and community composition of lakes and ponds in the Sierra Nevada, California ver 2. Environmental Data Initiative. https://doi.org/10.6073/pasta/d835832d7fd00d9e4466e44eea87fab3 (Accessed 2021-01-25).
